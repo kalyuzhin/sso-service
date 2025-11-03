@@ -45,3 +45,7 @@ vet: fmt
 ## runs protoc in order to generate proto files
 gen-protoc:
 	protoc -I api api/sso.proto --go_out=./internal/pkg/pb --go_opt=paths=source_relative --go-grpc_out=./internal/pkg/pb --go-grpc_opt=paths=source_relative
+
+.PHONY: run
+run: fmt
+	go run cmd/sso/main.go

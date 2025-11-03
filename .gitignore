@@ -10,4 +10,4 @@ bin/
 .bin
 build/
 Thumbs.db
-
+local.yaml
