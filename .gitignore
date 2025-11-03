@@ -1,0 +1,13 @@
+.DS_Store
+bin/
+*.out
+*.exe
+*.ddl
+.idea/
+*.env
+*.log
+.vscode/
+.bin
+build/
+Thumbs.db
+
