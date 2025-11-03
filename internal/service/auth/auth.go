@@ -2,9 +2,10 @@ package auth
 
 import (
 	"context"
-	errorpkg "github.com/kalyuzhin/sso-service/internal/error"
+
 	"golang.org/x/crypto/bcrypt"
 
+	errorpkg "github.com/kalyuzhin/sso-service/internal/error"
 	"github.com/kalyuzhin/sso-service/internal/model"
 )
 
@@ -19,7 +20,7 @@ type userSaver interface {
 }
 
 type userProvider interface {
-	User(ctx context.Context, email string) (user model.User, err error)
+	User(ctx context.Context, email string) (user model.DBUser, err error)
 }
 
 type appProvider interface {
@@ -37,6 +38,20 @@ func New(provider userProvider, saver userSaver, provider2 appProvider) *Auth {
 
 // Login – ...
 func (a *Auth) Login(ctx context.Context, email, pswd string, appID int32) (token string, err error) {
+	user, err := a.userProvider.User(ctx, email)
+	if err != nil {
+		return token, err
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(pswd), bcrypt.DefaultCost)
+	if err != nil {
+		return token, errorpkg.WrapErr(err, "can't create hash from password")
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.PasswordHash, hash)
+	if err != nil {
+		return token, errorpkg.WrapErr(err, "stored hash and password hash aren't equal")
+	}
 
 	return token, nil
 }
