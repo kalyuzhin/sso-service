@@ -22,7 +22,7 @@ type userSaver interface {
 }
 
 type userProvider interface {
-	User(ctx context.Context, email string) (user model.DBUser, err error)
+	GetUser(ctx context.Context, email string) (user model.DBUser, err error)
 }
 
 type appProvider interface {
@@ -40,17 +40,12 @@ func New(provider userProvider, saver userSaver, provider2 appProvider) *Auth {
 
 // Login – ...
 func (a *Auth) Login(ctx context.Context, email, pswd string, appID int32) (token string, err error) {
-	user, err := a.userProvider.User(ctx, email)
+	user, err := a.userProvider.GetUser(ctx, email)
 	if err != nil {
 		return token, errorpkg.WrapErr(err, "can't get user from storage")
 	}
 
-	hash, err := bcrypt.GenerateFromPassword([]byte(pswd), bcrypt.DefaultCost)
-	if err != nil {
-		return token, errorpkg.WrapErr(err, "can't create hash from password")
-	}
-
-	err = bcrypt.CompareHashAndPassword(user.PasswordHash, hash)
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(pswd))
 	if err != nil {
 		return token, errorpkg.WrapErr(err, "stored hash and password hash aren't equal")
 	}
@@ -67,7 +62,6 @@ func (a *Auth) Login(ctx context.Context, email, pswd string, appID int32) (toke
 
 // Register – ...
 func (a *Auth) Register(ctx context.Context, email, pswd string) (userID int64, err error) {
-
 	hash, err := bcrypt.GenerateFromPassword([]byte(pswd), bcrypt.DefaultCost)
 	if err != nil {
 		return 0, errorpkg.WrapErr(err, "can't create hash from password")

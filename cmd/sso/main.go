@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/kalyuzhin/sso-service/internal/app"
+	"context"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/kalyuzhin/sso-service/internal/app"
 	"github.com/kalyuzhin/sso-service/internal/config"
 )
 
@@ -16,7 +17,12 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	a := app.New(cfg.GRPC.Port)
+	ctx := context.Background()
+
+	a, err := app.New(ctx, cfg.Database.GetDSN(), cfg.GRPC.Port)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	go func() {
 		err := a.GRPCServer.Run()

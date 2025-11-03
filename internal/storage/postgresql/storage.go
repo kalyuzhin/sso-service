@@ -27,7 +27,7 @@ func (d *Database) GetUser(ctx context.Context, email string) (user model.DBUser
 	FROM users
 	WHERE email = $1;`
 
-	err = d.Get(ctx, &user, q, email)
+	err = d.ExecQueryRow(ctx, q, email).Scan(&user.ID, &user.Email, &user.PasswordHash)
 	if err != nil {
 		return user, errorpkg.WrapErr(err, "can't get user")
 	}
@@ -35,16 +35,21 @@ func (d *Database) GetUser(ctx context.Context, email string) (user model.DBUser
 	return user, nil
 }
 
-// RegisterUser – ...
-func (d *Database) RegisterUser(ctx context.Context, email string, passwordHash []byte) (userID int64, err error) {
+// SaveUser – ...
+func (d *Database) SaveUser(ctx context.Context, email string, passwordHash []byte) (userID int64, err error) {
 	q := `
 	INSERT INTO users(email,pass_hash)
-	VALUES($1, $2);`
+	VALUES($1, $2)
+	RETURNING id;`
 
-	_, err = d.Exec(ctx, q, email, passwordHash)
+	err = d.ExecQueryRow(ctx, q, email, passwordHash).Scan(&userID)
 	if err != nil {
 		return 0, errorpkg.WrapErr(err, "can't register user")
 	}
 
 	return userID, nil
+}
+
+func (d *Database) App(ctx context.Context, appID int32) (a model.App, err error) {
+	return a, err
 }

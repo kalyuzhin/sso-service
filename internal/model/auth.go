@@ -4,7 +4,7 @@ package model
 type DBUser struct {
 	ID           int64  `json:"id" db:"id"`
 	Email        string `json:"email" db:"email"`
-	PasswordHash []byte `json:"password_hash" db:"password_hash"`
+	PasswordHash string `json:"pass_hash" db:"pass_hash"`
 }
 
 // User – ...

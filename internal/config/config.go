@@ -3,18 +3,21 @@ package config
 import (
 	"flag"
 	"fmt"
-	"github.com/kalyuzhin/sso-service/internal/model"
 	"net"
 	"os"
 	"time"
 
+	"github.com/caarlos0/env/v11"
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 
 	errorpkg "github.com/kalyuzhin/sso-service/internal/error"
+	"github.com/kalyuzhin/sso-service/internal/model"
 )
 
 const (
 	configVarName = "config"
+	envVarName    = "env-path"
 )
 
 // Config – ...
@@ -33,10 +36,10 @@ type GRPCConfig struct {
 // DataBaseConfig – ...
 type DataBaseConfig struct {
 	Database string `env:"DATABASE"`
-	Host     string `env:"HOST"`
-	Port     string `env:"PORT"`
+	Host     string `env:"DB_HOST"`
+	Port     string `env:"DB_PORT"`
 	Name     string `env:"DB_NAME"`
-	User     string `env:"DB_USER"`
+	User     string `env:"DB_USERNAME"`
 	Password string `env:"DB_PASSWORD"`
 }
 
@@ -53,23 +56,25 @@ func (d *DataBaseConfig) GetDSN() string {
 
 // Load – ...
 func Load() (*Config, error) {
-	path := fetchConfigPath()
-	if path == "" {
-		return nil, errorpkg.New("path to config is empty")
+	paths := fetchConfigPath(configVarName, envVarName)
+	for _, path := range paths {
+		if path == "" {
+			return nil, errorpkg.New("path is empty")
+		}
 	}
 
-	return parseConfig(path)
+	return parseConfig(paths[0], paths[1])
 }
 
-func parseConfig(path string) (*Config, error) {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
+func parseConfig(pathConfig, pathEnv string) (*Config, error) {
+	if _, err := os.Stat(pathConfig); os.IsNotExist(err) {
 		return nil, errorpkg.New("file doesn't exist")
 	}
 
 	var cfg Config
 
 	v := viper.New()
-	v.SetConfigFile(path)
+	v.SetConfigFile(pathConfig)
 	err := v.ReadInConfig()
 	if err != nil {
 		return nil, errorpkg.New("can't read config")
@@ -79,16 +84,35 @@ func parseConfig(path string) (*Config, error) {
 		return nil, errorpkg.New("can't unmarshal config")
 	}
 
+	if _, err = os.Stat(pathEnv); os.IsNotExist(err) {
+		return nil, errorpkg.New("file doesn't exist")
+	}
+
+	var db DataBaseConfig
+	if err = godotenv.Load(pathEnv); err != nil {
+		return nil, errorpkg.WrapErr(err, "can't load env")
+	}
+	err = env.Parse(&db)
+	if err != nil {
+		return nil, errorpkg.WrapErr(err, "can't parse env")
+	}
+
+	cfg.Database = db
+
 	return &cfg, nil
 }
 
-func fetchConfigPath() (path string) {
-	flag.StringVar(&path, configVarName, "", "path to config")
-	flag.Parse()
+func fetchConfigPath(varNames ...string) []string {
+	paths := make([]string, 2, 2)
 
-	if path == "" {
-		path = os.Getenv(configVarName)
+	for idx, varName := range varNames {
+		flag.StringVar(&paths[idx], varName, "", fmt.Sprintf("path to %s", varName))
+		if paths[idx] == "" {
+			paths[idx] = os.Getenv(varName)
+		}
 	}
 
-	return path
+	flag.Parse()
+
+	return paths
 }

@@ -2,13 +2,12 @@ package auth
 
 import (
 	"context"
+	errorpkg "github.com/kalyuzhin/sso-service/internal/error"
+	ssov1 "github.com/kalyuzhin/sso-service/internal/pkg/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"regexp"
-
-	errorpkg "github.com/kalyuzhin/sso-service/internal/error"
-	ssov1 "github.com/kalyuzhin/sso-service/internal/pkg/pb"
+	"net/mail"
 )
 
 const (
@@ -21,8 +20,8 @@ type serverAPI struct {
 }
 
 // Register – ...
-func Register(gRPC *grpc.Server) {
-	ssov1.RegisterAuthServer(gRPC, &serverAPI{})
+func Register(gRPC *grpc.Server, service implementation) {
+	ssov1.RegisterAuthServer(gRPC, &serverAPI{service: service})
 }
 
 type implementation interface {
@@ -41,8 +40,8 @@ func (s *serverAPI) Register(ctx context.Context, req *ssov1.RegisterRequest) (*
 	}
 
 	userID, err := s.service.Register(ctx, email, password)
-	if err != nil {
-		return nil, nil
+	if err != nil || userID == 0 {
+		return nil, status.Error(codes.Internal, "internal error")
 	}
 
 	return &ssov1.RegisterResponse{UserId: userID}, nil
@@ -65,7 +64,7 @@ func (s *serverAPI) Login(ctx context.Context, req *ssov1.LoginRequest) (*ssov1.
 
 	token, err := s.service.Login(ctx, email, password, appID)
 	if err != nil {
-		return nil, nil
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &ssov1.LoginResponse{Token: token}, nil
@@ -84,9 +83,9 @@ func validateEmailAndPassword(email, password string) error {
 		return errorpkg.New("password length should be 8 characters at least")
 	}
 
-	re := regexp.MustCompile(`w+@w+\.w+`)
-	if ok := re.MatchString(email); !ok {
-		return errorpkg.New("email doesn't match")
+	a, err := mail.ParseAddress(email)
+	if err != nil || a.Address != email {
+		return errorpkg.New("email validation failed")
 	}
 
 	return nil
