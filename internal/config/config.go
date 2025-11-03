@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/spf13/viper"
+
+	errorpkg "github.com/kalyuzhin/sso-service/internal/error"
 )
 
 const (
@@ -14,9 +16,8 @@ const (
 
 // Config – ...
 type Config struct {
-	Env      string        `yaml:"env" env-default:"local"`
-	TokenTTL time.Duration `yaml:"token_ttl" env-required:"true"`
-	GRPC     GRPCConfig    `yaml:"grpc"`
+	Env  string     `yaml:"env" env-default:"local"`
+	GRPC GRPCConfig `yaml:"grpc"`
 }
 
 // GRPCConfig – ...
@@ -26,18 +27,18 @@ type GRPCConfig struct {
 }
 
 // Load – ...
-func Load() *Config {
+func Load() (*Config, error) {
 	path := fetchConfigPath()
 	if path == "" {
-		panic("path to config is empty")
+		return nil, errorpkg.New("path to config is empty")
 	}
 
 	return parseConfig(path)
 }
 
-func parseConfig(path string) *Config {
+func parseConfig(path string) (*Config, error) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		panic("file doesn't exist")
+		return nil, errorpkg.New("file doesn't exist")
 	}
 
 	var cfg Config
@@ -46,14 +47,14 @@ func parseConfig(path string) *Config {
 	v.SetConfigFile(path)
 	err := v.ReadInConfig()
 	if err != nil {
-		panic("can't read config")
+		return nil, errorpkg.New("can't read config")
 	}
 
 	if err = v.Unmarshal(&cfg); err != nil {
-		panic("can't unmarshal config")
+		return nil, errorpkg.New("can't unmarshal config")
 	}
 
-	return &cfg
+	return &cfg, nil
 }
 
 func fetchConfigPath() (path string) {
