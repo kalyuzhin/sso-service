@@ -8,18 +8,20 @@ option go_package = "kalyuzhin.sso.v1;ssov1";
 
 service Auth{
   rpc Register (RegisterRequest) returns(RegisterResponse){
-//    option (google.api.http) = {
-//      post: "/api/v1/user"
-//      body: "*"
-//    };
+    //    option (google.api.http) = {
+    //      post: "/api/v1/user"
+    //      body: "*"
+    //    };
   };
 
   rpc Login(LoginRequest) returns(LoginResponse){
-//    option (google.api.http) = {
-//      get: "/api/v1/user/{id}"
-//      body: "*"
-//    };
+    //    option (google.api.http) = {
+    //      get: "/api/v1/user/{id}"
+    //      body: "*"
+    //    };
   }
+
+  rpc CreateApp(CreateAppRequest) returns(CreateAppResponse){};
 }
 
 message RegisterRequest{
@@ -39,4 +41,13 @@ message LoginRequest {
 
 message LoginResponse {
   string token = 1;
+}
+
+message CreateAppRequest {
+  string name = 1;
+  string secret = 2;
+}
+
+message CreateAppResponse {
+  int64 id = 1;
 }

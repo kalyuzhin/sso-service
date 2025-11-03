@@ -15,6 +15,7 @@ type User struct {
 
 // App – ...
 type App struct {
-	ID   int64
-	Name string
+	ID     int64
+	Name   string
+	Secret string
 }
