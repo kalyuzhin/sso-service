@@ -1,9 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"github.com/kalyuzhin/sso-service/internal/app"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/kalyuzhin/sso-service/internal/config"
 )
@@ -16,10 +18,17 @@ func main() {
 
 	a := app.New(cfg.GRPC.Port)
 
-	err = a.GRPCServer.Run()
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	go func() {
+		err := a.GRPCServer.Run()
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+	}()
 
-	fmt.Println(cfg)
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+
+	<-stop
+
+	a.GRPCServer.Stop()
 }
