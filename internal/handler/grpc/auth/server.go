@@ -17,6 +17,7 @@ const (
 
 type serverAPI struct {
 	ssov1.UnimplementedAuthServer
+	service implementation
 }
 
 // Register – ...
@@ -25,16 +26,26 @@ func Register(gRPC *grpc.Server) {
 }
 
 type implementation interface {
+	Register(ctx context.Context, email, pswd string) (userID int64, err error)
+	Login(ctx context.Context, email, pswd string, appID int32) (token string, err error)
 }
 
 // Register – ...
 func (s *serverAPI) Register(ctx context.Context, req *ssov1.RegisterRequest) (*ssov1.RegisterResponse, error) {
-	err := validateEmailAndPassword(req.GetEmail(), req.GetPassword())
+	email := req.GetEmail()
+	password := req.GetPassword()
+
+	err := validateEmailAndPassword(email, password)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	return &ssov1.RegisterResponse{}, nil
+	userID, err := s.service.Register(ctx, email, password)
+	if err != nil {
+		return nil, nil
+	}
+
+	return &ssov1.RegisterResponse{UserId: userID}, nil
 }
 
 // Login – ...
@@ -52,7 +63,12 @@ func (s *serverAPI) Login(ctx context.Context, req *ssov1.LoginRequest) (*ssov1.
 		return nil, status.Error(codes.InvalidArgument, "app id is required")
 	}
 
-	return &ssov1.LoginResponse{}, nil
+	token, err := s.service.Login(ctx, email, password, appID)
+	if err != nil {
+		return nil, nil
+	}
+
+	return &ssov1.LoginResponse{Token: token}, nil
 }
 
 func validateEmailAndPassword(email, password string) error {
