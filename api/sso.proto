@@ -2,23 +2,23 @@ syntax = 'proto3';
 
 package auth;
 
-import "google/api/annotations.proto";
+//import "google/api/annotations.proto";
 
 option go_package = "kalyuzhin.sso.v1;ssov1";
 
 service Auth{
   rpc Register (RegisterRequest) returns(RegisterResponse){
-    option (google.api.http) = {
-      post: "/api/v1/user"
-      body: "*"
-    };
+//    option (google.api.http) = {
+//      post: "/api/v1/user"
+//      body: "*"
+//    };
   };
 
   rpc Login(LoginRequest) returns(LoginResponse){
-    option (google.api.http) = {
-      get: "/api/v1/user/{id}"
-      body: "*"
-    };
+//    option (google.api.http) = {
+//      get: "/api/v1/user/{id}"
+//      body: "*"
+//    };
   }
 }
 

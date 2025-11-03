@@ -40,3 +40,8 @@ lint: fmt
 ## runs go vet
 vet: fmt
 	go vet ./...
+
+.PHONY: gen-protoc
+## runs protoc in order to generate proto files
+gen-protoc:
+	protoc -I api api/sso.proto --go_out=./internal/pkg/pb --go_opt=paths=source_relative --go-grpc_out=./internal/pkg/pb --go-grpc_opt=paths=source_relative
