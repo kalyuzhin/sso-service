@@ -2,6 +2,9 @@ package config
 
 import (
 	"flag"
+	"fmt"
+	"github.com/kalyuzhin/sso-service/internal/model"
+	"net"
 	"os"
 	"time"
 
@@ -16,14 +19,36 @@ const (
 
 // Config – ...
 type Config struct {
-	Env  string     `yaml:"env" env-default:"local"`
-	GRPC GRPCConfig `yaml:"grpc"`
+	Env      string     `yaml:"env" env-default:"local"`
+	GRPC     GRPCConfig `yaml:"grpc"`
+	Database DataBaseConfig
 }
 
 // GRPCConfig – ...
 type GRPCConfig struct {
 	Port    int           `yaml:"port"`
 	Timeout time.Duration `yaml:"timeout"`
+}
+
+// DataBaseConfig – ...
+type DataBaseConfig struct {
+	Database string `env:"DATABASE"`
+	Host     string `env:"HOST"`
+	Port     string `env:"PORT"`
+	Name     string `env:"DB_NAME"`
+	User     string `env:"DB_USER"`
+	Password string `env:"DB_PASSWORD"`
+}
+
+func (d *DataBaseConfig) GetDSN() string {
+	switch d.Database {
+	case model.PostgreSQLName:
+		return fmt.Sprintf(
+			"postgres://%s:%s@%s/%s?sslmode=disable", d.User, d.Password,
+			net.JoinHostPort(d.Host, d.Port), d.Name)
+	default:
+		return ""
+	}
 }
 
 // Load – ...

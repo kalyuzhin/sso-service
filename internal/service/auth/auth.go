@@ -2,10 +2,12 @@ package auth
 
 import (
 	"context"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
 	errorpkg "github.com/kalyuzhin/sso-service/internal/error"
+	"github.com/kalyuzhin/sso-service/internal/lib/jwt"
 	"github.com/kalyuzhin/sso-service/internal/model"
 )
 
@@ -40,7 +42,7 @@ func New(provider userProvider, saver userSaver, provider2 appProvider) *Auth {
 func (a *Auth) Login(ctx context.Context, email, pswd string, appID int32) (token string, err error) {
 	user, err := a.userProvider.User(ctx, email)
 	if err != nil {
-		return token, err
+		return token, errorpkg.WrapErr(err, "can't get user from storage")
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(pswd), bcrypt.DefaultCost)
@@ -53,9 +55,17 @@ func (a *Auth) Login(ctx context.Context, email, pswd string, appID int32) (toke
 		return token, errorpkg.WrapErr(err, "stored hash and password hash aren't equal")
 	}
 
+	app, err := a.appProvider.App(ctx, appID)
+	if err != nil {
+		return token, errorpkg.WrapErr(err, "can't get app from storage")
+	}
+
+	token, err = jwt.GenerateToken(app, user, time.Hour)
+
 	return token, nil
 }
 
+// Register – ...
 func (a *Auth) Register(ctx context.Context, email, pswd string) (userID int64, err error) {
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(pswd), bcrypt.DefaultCost)

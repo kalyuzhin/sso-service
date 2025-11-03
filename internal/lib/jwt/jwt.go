@@ -10,7 +10,7 @@ import (
 )
 
 // GenerateToken – ...
-func GenerateToken(app model.App, user model.User, ttl time.Duration) (token string, err error) {
+func GenerateToken(app model.App, user model.DBUser, ttl time.Duration) (token string, err error) {
 	tokenObj := jwt.New(jwt.SigningMethodHS256)
 
 	claims := tokenObj.Claims.(jwt.MapClaims)
