@@ -1,12 +1,18 @@
 # More info on config here: https://golangci-lint.run/usage/configuration/#config-file
 run:
+  concurrency: 8
   timeout: 10m
   issues-exit-code: 1
   tests: true
+  skip-dirs:
+    - bin
+    - vendor
+    - var
+    - tmp
+    - .cache
 
 output:
-  formats:
-    - format: colored-line-number
+  format: colored-line-number
   print-issued-lines: true
   print-linter-name: true
 
