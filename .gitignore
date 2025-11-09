@@ -11,3 +11,4 @@ bin/
 build/
 Thumbs.db
 local.yaml
+private.pem

@@ -11,6 +11,7 @@ GOARCH?=$(shell go env GOARCH)
 DB_SETUP := user=$(DB_USERNAME) password=$(DB_PASSWORD) dbname=$(DB_NAME) host=$(DB_HOST) port=$(DB_PORT) sslmode=disable
 
 CUR_DIR=$(shell pwd)
+SCRIPTS_FOLDER=$(CUR_DIR)/scripts
 MIGRATIONS_FOLDER=$(CUR_DIR)/scripts/migrations
 
 .PHONY: help
