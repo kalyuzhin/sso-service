@@ -7,7 +7,7 @@ CREATE TABLE refresh_sessions
     refresh_token_hash TEXT         NOT NULL,
     user_agent         VARCHAR(200) NOT NULL,
     ip                 VARCHAR(20)  NOT NULL,
-    expires_in         BIGINT       NOT NULL,
+    expires_in         TIMESTAMPTZ  NOT NULL,
     created_at         TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 -- +goose StatementEnd

@@ -2,6 +2,7 @@ package postgresql
 
 import (
 	"context"
+	"time"
 
 	_ "github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -50,6 +51,26 @@ func (d *Database) SaveUser(ctx context.Context, email string, passwordHash []by
 	return userID, nil
 }
 
+// App – ...
 func (d *Database) App(ctx context.Context, appID int32) (a model.App, err error) {
 	return a, err
+}
+
+// SaveRefreshSession – ...
+func (d *Database) SaveRefreshSession(ctx context.Context, refreshTokenHash []byte, userID int64, ip, userAgent string,
+	exparation time.Time) error {
+	q := `
+	INSERT INTO refresh_sessions(refresh_token_hash, user_id, ip, user_agent,expires_in)
+	VALUES($1,$2,$3,$4,$5);`
+
+	rows, err := d.Exec(ctx, q, refreshTokenHash, userID, ip, userAgent, exparation)
+	if err != nil {
+		return errorpkg.WrapErr(err, "can't save session")
+	}
+
+	if rows.RowsAffected() <= 0 {
+		return errorpkg.New("query doesn't have any effect")
+	}
+
+	return nil
 }

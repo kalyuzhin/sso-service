@@ -19,7 +19,7 @@ func main() {
 
 	ctx := context.Background()
 
-	a, err := app.New(ctx, cfg.Database.GetDSN(), cfg.GRPC.Port)
+	a, err := app.New(ctx, cfg.Database.GetDSN(), cfg.GRPC.Port, *cfg)
 	if err != nil {
 		log.Fatal(err)
 	}

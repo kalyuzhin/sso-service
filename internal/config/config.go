@@ -22,9 +22,10 @@ const (
 
 // Config – ...
 type Config struct {
-	Env      string     `yaml:"env" env-default:"local"`
-	GRPC     GRPCConfig `yaml:"grpc"`
-	Database DataBaseConfig
+	Env                    string        `yaml:"env" env-default:"local"`
+	RefreshTokenExparation time.Duration `yaml:"refresh-token-exparation"`
+	GRPC                   GRPCConfig    `yaml:"grpc"`
+	Database               DataBaseConfig
 }
 
 // GRPCConfig – ...

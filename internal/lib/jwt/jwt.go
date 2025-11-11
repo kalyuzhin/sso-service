@@ -11,7 +11,8 @@ import (
 
 // GenerateToken – ...
 func GenerateToken(app model.App, user model.DBUser, ttl time.Duration) (token string, err error) {
-	tokenObj := jwt.New(jwt.SigningMethodRS256)
+	// TODO: использовать rs256 вместо hs256
+	tokenObj := jwt.New(jwt.SigningMethodHS256)
 
 	claims := tokenObj.Claims.(jwt.MapClaims)
 	claims["uid"] = user.ID

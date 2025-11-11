@@ -6,15 +6,24 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/kalyuzhin/sso-service/internal/config"
 	errorpkg "github.com/kalyuzhin/sso-service/internal/error"
 	"github.com/kalyuzhin/sso-service/internal/lib/jwt"
+	"github.com/kalyuzhin/sso-service/internal/lib/refreshtoken"
 	"github.com/kalyuzhin/sso-service/internal/model"
 )
 
 type Auth struct {
 	userSaver    userSaver
 	userProvider userProvider
+	sessionSaver sessionSaver
 	appProvider  appProvider
+	cfg          config.Config
+}
+
+type sessionSaver interface {
+	SaveRefreshSession(ctx context.Context, refreshTokenHash []byte, userID int64, ip, userAgent string,
+		exparation time.Time) error
 }
 
 type userSaver interface {
@@ -30,34 +39,51 @@ type appProvider interface {
 }
 
 // New – ...
-func New(provider userProvider, saver userSaver, provider2 appProvider) *Auth {
+func New(provider userProvider, saver userSaver, provider2 appProvider, sessionSaver sessionSaver,
+	cfg config.Config) *Auth {
 	return &Auth{
 		userSaver:    saver,
 		userProvider: provider,
 		appProvider:  provider2,
+		sessionSaver: sessionSaver,
+		cfg:          cfg,
 	}
 }
 
 // Login – ...
-func (a *Auth) Login(ctx context.Context, email, pswd string, appID int32) (token string, err error) {
+func (a *Auth) Login(ctx context.Context, email, pswd string, appID int32, params model.UserRequestParams) (accessToken string, err error) {
 	user, err := a.userProvider.GetUser(ctx, email)
 	if err != nil {
-		return token, errorpkg.WrapErr(err, "can't get user from storage")
+		return accessToken, errorpkg.WrapErr(err, "can't get user from storage")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(pswd))
 	if err != nil {
-		return token, errorpkg.WrapErr(err, "stored hash and password hash aren't equal")
+		return accessToken, errorpkg.WrapErr(err, "stored hash and password hash aren't equal")
 	}
 
 	app, err := a.appProvider.App(ctx, appID)
 	if err != nil {
-		return token, errorpkg.WrapErr(err, "can't get app from storage")
+		return accessToken, errorpkg.WrapErr(err, "can't get app from storage")
 	}
 
-	token, err = jwt.GenerateToken(app, user, time.Hour)
+	accessToken, err = jwt.GenerateToken(app, user, time.Hour)
+	if err != nil {
+		return accessToken, errorpkg.WrapErr(err, "can't generate access token")
+	}
+	_, refreshTokenHash, err := refreshtoken.GenerateRefreshToken()
+	if err != nil {
+		return accessToken, errorpkg.WrapErr(err, "can't generate refresh token")
+	}
 
-	return token, nil
+	refreshTokenExpiration := time.Now().UTC().Add(a.cfg.RefreshTokenExparation)
+
+	err = a.sessionSaver.SaveRefreshSession(ctx, refreshTokenHash, user.ID, params.IP, params.UserAgent, refreshTokenExpiration)
+	if err != nil {
+		return accessToken, errorpkg.WrapErr(err, "can't save refresh session")
+	}
+
+	return accessToken, nil
 }
 
 // Register – ...

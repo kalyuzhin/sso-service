@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	errorpkg "github.com/kalyuzhin/sso-service/internal/error"
+	"github.com/kalyuzhin/sso-service/internal/model"
 	ssov1 "github.com/kalyuzhin/sso-service/internal/pkg/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -26,7 +27,7 @@ func Register(gRPC *grpc.Server, service implementation) {
 
 type implementation interface {
 	Register(ctx context.Context, email, pswd string) (userID int64, err error)
-	Login(ctx context.Context, email, pswd string, appID int32) (token string, err error)
+	Login(ctx context.Context, email, pswd string, appID int32, params model.UserRequestParams) (token string, err error)
 }
 
 // Register – ...
@@ -62,7 +63,15 @@ func (s *serverAPI) Login(ctx context.Context, req *ssov1.LoginRequest) (*ssov1.
 		return nil, status.Error(codes.InvalidArgument, "app id is required")
 	}
 
-	token, err := s.service.Login(ctx, email, password, appID)
+	userAgent, ip, err := getAuxiliaryParams(ctx)
+	if err != nil {
+		return nil, status.Error(codes.DataLoss, "invalid request")
+	}
+
+	token, err := s.service.Login(ctx, email, password, appID, model.UserRequestParams{
+		IP:        ip,
+		UserAgent: concatString(userAgent),
+	})
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

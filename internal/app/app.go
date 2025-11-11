@@ -5,6 +5,7 @@ import (
 	"time"
 
 	grpcapp "github.com/kalyuzhin/sso-service/internal/app/grpc"
+	"github.com/kalyuzhin/sso-service/internal/config"
 	"github.com/kalyuzhin/sso-service/internal/service/auth"
 	"github.com/kalyuzhin/sso-service/internal/storage/postgresql"
 )
@@ -16,13 +17,13 @@ type App struct {
 }
 
 // New – ...
-func New(ctx context.Context, dsn string, port int) (*App, error) {
+func New(ctx context.Context, dsn string, port int, cfg config.Config) (*App, error) {
 	storage, err := postgresql.NewDB(ctx, dsn)
 	if err != nil {
 		return nil, err
 	}
 
-	authService := auth.New(storage, storage, storage)
+	authService := auth.New(storage, storage, storage, storage, cfg)
 	grpcApp := grpcapp.NewGRPCApp(authService, port)
 
 	return &App{

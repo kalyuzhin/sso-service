@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"strings"
 
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
@@ -26,4 +27,13 @@ func getAuxiliaryParams(ctx context.Context) (userAgent []string, ip string, err
 	ip = p.Addr.String()
 
 	return userAgent, ip, nil
+}
+
+func concatString(input []string) string {
+	sb := strings.Builder{}
+	for _, s := range input {
+		sb.WriteString(s)
+	}
+
+	return sb.String()
 }
