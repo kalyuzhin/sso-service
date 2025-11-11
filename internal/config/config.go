@@ -1,6 +1,9 @@
 package config
 
 import (
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"flag"
 	"fmt"
 	"net"
@@ -26,6 +29,8 @@ type Config struct {
 	RefreshTokenExparation time.Duration `yaml:"refresh-token-exparation"`
 	GRPC                   GRPCConfig    `yaml:"grpc"`
 	Database               DataBaseConfig
+	PrivateRSAKey          *rsa.PrivateKey
+	PathToRSAKey           string `env:"PATH_TO_PRIVATE_KEY"`
 }
 
 // GRPCConfig – ...
@@ -64,7 +69,17 @@ func Load() (*Config, error) {
 		}
 	}
 
-	return parseConfig(paths[0], paths[1])
+	cfg, err := parseConfig(paths[0], paths[1])
+	if err != nil {
+		return nil, err
+	}
+
+	err = cfg.readRSAPrivateKey()
+	if err != nil {
+		return nil, err
+	}
+
+	return cfg, nil
 }
 
 func parseConfig(pathConfig, pathEnv string) (*Config, error) {
@@ -89,16 +104,13 @@ func parseConfig(pathConfig, pathEnv string) (*Config, error) {
 		return nil, errorpkg.New("file doesn't exist")
 	}
 
-	var db DataBaseConfig
 	if err = godotenv.Load(pathEnv); err != nil {
 		return nil, errorpkg.WrapErr(err, "can't load env")
 	}
-	err = env.Parse(&db)
+	err = env.Parse(&cfg)
 	if err != nil {
 		return nil, errorpkg.WrapErr(err, "can't parse env")
 	}
-
-	cfg.Database = db
 
 	return &cfg, nil
 }
@@ -116,4 +128,21 @@ func fetchConfigPath(varNames ...string) []string {
 	flag.Parse()
 
 	return paths
+}
+
+func (c *Config) readRSAPrivateKey() error {
+	bytes, err := os.ReadFile(c.PathToRSAKey)
+	if err != nil {
+		return errorpkg.WrapErr(err, "can't read private key file")
+	}
+
+	block, _ := pem.Decode(bytes)
+	parseRes, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+	if err != nil {
+		return errorpkg.WrapErr(err, "can't parse private key")
+	}
+
+	c.PrivateRSAKey = parseRes.(*rsa.PrivateKey)
+
+	return nil
 }

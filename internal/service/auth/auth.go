@@ -67,7 +67,7 @@ func (a *Auth) Login(ctx context.Context, email, pswd string, appID int32, param
 		return accessToken, errorpkg.WrapErr(err, "can't get app from storage")
 	}
 
-	accessToken, err = jwt.GenerateToken(app, user, time.Hour)
+	accessToken, err = jwt.GenerateToken(app, user, time.Hour, a.cfg.PrivateRSAKey)
 	if err != nil {
 		return accessToken, errorpkg.WrapErr(err, "can't generate access token")
 	}
