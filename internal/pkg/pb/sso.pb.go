@@ -317,6 +317,170 @@ func (x *CreateAppResponse) GetId() int64 {
 	return 0
 }
 
+type GetPublicKeyRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPublicKeyRequest) Reset() {
+	*x = GetPublicKeyRequest{}
+	mi := &file_sso_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPublicKeyRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPublicKeyRequest) ProtoMessage() {}
+
+func (x *GetPublicKeyRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPublicKeyRequest.ProtoReflect.Descriptor instead.
+func (*GetPublicKeyRequest) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{6}
+}
+
+type GetPublicKeyResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Keys          []*Jwk                 `protobuf:"bytes,1,rep,name=keys,proto3" json:"keys,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPublicKeyResponse) Reset() {
+	*x = GetPublicKeyResponse{}
+	mi := &file_sso_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPublicKeyResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPublicKeyResponse) ProtoMessage() {}
+
+func (x *GetPublicKeyResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPublicKeyResponse.ProtoReflect.Descriptor instead.
+func (*GetPublicKeyResponse) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GetPublicKeyResponse) GetKeys() []*Jwk {
+	if x != nil {
+		return x.Keys
+	}
+	return nil
+}
+
+type Jwk struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Kty           string                 `protobuf:"bytes,1,opt,name=kty,proto3" json:"kty,omitempty"`
+	Kid           string                 `protobuf:"bytes,2,opt,name=kid,proto3" json:"kid,omitempty"`
+	Use           string                 `protobuf:"bytes,3,opt,name=use,proto3" json:"use,omitempty"`
+	Alg           string                 `protobuf:"bytes,4,opt,name=alg,proto3" json:"alg,omitempty"`
+	N             string                 `protobuf:"bytes,5,opt,name=n,proto3" json:"n,omitempty"`
+	E             string                 `protobuf:"bytes,6,opt,name=e,proto3" json:"e,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Jwk) Reset() {
+	*x = Jwk{}
+	mi := &file_sso_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Jwk) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Jwk) ProtoMessage() {}
+
+func (x *Jwk) ProtoReflect() protoreflect.Message {
+	mi := &file_sso_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Jwk.ProtoReflect.Descriptor instead.
+func (*Jwk) Descriptor() ([]byte, []int) {
+	return file_sso_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *Jwk) GetKty() string {
+	if x != nil {
+		return x.Kty
+	}
+	return ""
+}
+
+func (x *Jwk) GetKid() string {
+	if x != nil {
+		return x.Kid
+	}
+	return ""
+}
+
+func (x *Jwk) GetUse() string {
+	if x != nil {
+		return x.Use
+	}
+	return ""
+}
+
+func (x *Jwk) GetAlg() string {
+	if x != nil {
+		return x.Alg
+	}
+	return ""
+}
+
+func (x *Jwk) GetN() string {
+	if x != nil {
+		return x.N
+	}
+	return ""
+}
+
+func (x *Jwk) GetE() string {
+	if x != nil {
+		return x.E
+	}
+	return ""
+}
+
 var File_sso_proto protoreflect.FileDescriptor
 
 const file_sso_proto_rawDesc = "" +
@@ -337,11 +501,22 @@ const file_sso_proto_rawDesc = "" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x16\n" +
 	"\x06secret\x18\x02 \x01(\tR\x06secret\"#\n" +
 	"\x11CreateAppResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id2\xb7\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x15\n" +
+	"\x13GetPublicKeyRequest\"5\n" +
+	"\x14GetPublicKeyResponse\x12\x1d\n" +
+	"\x04keys\x18\x01 \x03(\v2\t.auth.JwkR\x04keys\"i\n" +
+	"\x03Jwk\x12\x10\n" +
+	"\x03kty\x18\x01 \x01(\tR\x03kty\x12\x10\n" +
+	"\x03kid\x18\x02 \x01(\tR\x03kid\x12\x10\n" +
+	"\x03use\x18\x03 \x01(\tR\x03use\x12\x10\n" +
+	"\x03alg\x18\x04 \x01(\tR\x03alg\x12\f\n" +
+	"\x01n\x18\x05 \x01(\tR\x01n\x12\f\n" +
+	"\x01e\x18\x06 \x01(\tR\x01e2\x80\x02\n" +
 	"\x04Auth\x12;\n" +
 	"\bRegister\x12\x15.auth.RegisterRequest\x1a\x16.auth.RegisterResponse\"\x00\x122\n" +
 	"\x05Login\x12\x12.auth.LoginRequest\x1a\x13.auth.LoginResponse\"\x00\x12>\n" +
-	"\tCreateApp\x12\x16.auth.CreateAppRequest\x1a\x17.auth.CreateAppResponse\"\x00B\x18Z\x16kalyuzhin.sso.v1;ssov1b\x06proto3"
+	"\tCreateApp\x12\x16.auth.CreateAppRequest\x1a\x17.auth.CreateAppResponse\"\x00\x12G\n" +
+	"\fGetPublicKey\x12\x19.auth.GetPublicKeyRequest\x1a\x1a.auth.GetPublicKeyResponse\"\x00B\x18Z\x16kalyuzhin.sso.v1;ssov1b\x06proto3"
 
 var (
 	file_sso_proto_rawDescOnce sync.Once
@@ -355,27 +530,33 @@ func file_sso_proto_rawDescGZIP() []byte {
 	return file_sso_proto_rawDescData
 }
 
-var file_sso_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_sso_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_sso_proto_goTypes = []any{
-	(*RegisterRequest)(nil),   // 0: auth.RegisterRequest
-	(*RegisterResponse)(nil),  // 1: auth.RegisterResponse
-	(*LoginRequest)(nil),      // 2: auth.LoginRequest
-	(*LoginResponse)(nil),     // 3: auth.LoginResponse
-	(*CreateAppRequest)(nil),  // 4: auth.CreateAppRequest
-	(*CreateAppResponse)(nil), // 5: auth.CreateAppResponse
+	(*RegisterRequest)(nil),      // 0: auth.RegisterRequest
+	(*RegisterResponse)(nil),     // 1: auth.RegisterResponse
+	(*LoginRequest)(nil),         // 2: auth.LoginRequest
+	(*LoginResponse)(nil),        // 3: auth.LoginResponse
+	(*CreateAppRequest)(nil),     // 4: auth.CreateAppRequest
+	(*CreateAppResponse)(nil),    // 5: auth.CreateAppResponse
+	(*GetPublicKeyRequest)(nil),  // 6: auth.GetPublicKeyRequest
+	(*GetPublicKeyResponse)(nil), // 7: auth.GetPublicKeyResponse
+	(*Jwk)(nil),                  // 8: auth.Jwk
 }
 var file_sso_proto_depIdxs = []int32{
-	0, // 0: auth.Auth.Register:input_type -> auth.RegisterRequest
-	2, // 1: auth.Auth.Login:input_type -> auth.LoginRequest
-	4, // 2: auth.Auth.CreateApp:input_type -> auth.CreateAppRequest
-	1, // 3: auth.Auth.Register:output_type -> auth.RegisterResponse
-	3, // 4: auth.Auth.Login:output_type -> auth.LoginResponse
-	5, // 5: auth.Auth.CreateApp:output_type -> auth.CreateAppResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	8, // 0: auth.GetPublicKeyResponse.keys:type_name -> auth.Jwk
+	0, // 1: auth.Auth.Register:input_type -> auth.RegisterRequest
+	2, // 2: auth.Auth.Login:input_type -> auth.LoginRequest
+	4, // 3: auth.Auth.CreateApp:input_type -> auth.CreateAppRequest
+	6, // 4: auth.Auth.GetPublicKey:input_type -> auth.GetPublicKeyRequest
+	1, // 5: auth.Auth.Register:output_type -> auth.RegisterResponse
+	3, // 6: auth.Auth.Login:output_type -> auth.LoginResponse
+	5, // 7: auth.Auth.CreateApp:output_type -> auth.CreateAppResponse
+	7, // 8: auth.Auth.GetPublicKey:output_type -> auth.GetPublicKeyResponse
+	5, // [5:9] is the sub-list for method output_type
+	1, // [1:5] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_sso_proto_init() }
@@ -389,7 +570,7 @@ func file_sso_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_sso_proto_rawDesc), len(file_sso_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

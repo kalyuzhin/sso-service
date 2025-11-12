@@ -10,9 +10,15 @@ import (
 	"github.com/kalyuzhin/sso-service/internal/model"
 )
 
+const (
+	kid = "ab1c1"
+)
+
 // GenerateToken – ...
 func GenerateToken(app model.App, user model.DBUser, ttl time.Duration, privateKey *rsa.PrivateKey) (token string, err error) {
 	tokenObj := jwt.New(jwt.SigningMethodRS256)
+	// TODO: вынести генерацию kid и добавить его в конфиг
+	tokenObj.Header["kid"] = kid
 
 	claims := tokenObj.Claims.(jwt.MapClaims)
 	claims["uid"] = user.ID

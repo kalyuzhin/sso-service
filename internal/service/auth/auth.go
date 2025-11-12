@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"github.com/kalyuzhin/sso-service/internal/lib/jwks"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -99,4 +100,14 @@ func (a *Auth) Register(ctx context.Context, email, pswd string) (userID int64, 
 	}
 
 	return userID, nil
+}
+
+// GetPublicKeys – ...
+func (a *Auth) GetPublicKeys(_ context.Context) *model.JWKS {
+	return jwks.MakeJWKS(a.cfg.PublicRSAKey)
+}
+
+// Logout – ...
+func (a *Auth) Logout(ctx context.Context) {
+
 }

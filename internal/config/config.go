@@ -30,7 +30,9 @@ type Config struct {
 	GRPC                   GRPCConfig    `yaml:"grpc"`
 	Database               DataBaseConfig
 	PrivateRSAKey          *rsa.PrivateKey
+	PublicRSAKey           *rsa.PublicKey
 	PathToRSAKey           string `env:"PATH_TO_PRIVATE_KEY"`
+	PathToRSAPub           string `env:"PATH_TO_PUB_KEY"`
 }
 
 // GRPCConfig – ...
@@ -75,6 +77,11 @@ func Load() (*Config, error) {
 	}
 
 	err = cfg.readRSAPrivateKey()
+	if err != nil {
+		return nil, err
+	}
+
+	err = cfg.readRSAPublicKey()
 	if err != nil {
 		return nil, err
 	}
@@ -143,6 +150,23 @@ func (c *Config) readRSAPrivateKey() error {
 	}
 
 	c.PrivateRSAKey = parseRes.(*rsa.PrivateKey)
+
+	return nil
+}
+
+func (c *Config) readRSAPublicKey() error {
+	bytes, err := os.ReadFile(c.PathToRSAPub)
+	if err != nil {
+		return errorpkg.WrapErr(err, "can't read private key file")
+	}
+
+	block, _ := pem.Decode(bytes)
+	parseRes, err := x509.ParsePKIXPublicKey(block.Bytes)
+	if err != nil {
+		return errorpkg.WrapErr(err, "can't parse private key")
+	}
+
+	c.PublicRSAKey = parseRes.(*rsa.PublicKey)
 
 	return nil
 }

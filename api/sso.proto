@@ -22,6 +22,8 @@ service Auth{
   }
 
   rpc CreateApp(CreateAppRequest) returns(CreateAppResponse){};
+
+  rpc GetPublicKey(GetPublicKeyRequest) returns (GetPublicKeyResponse){};
 }
 
 message RegisterRequest{
@@ -50,4 +52,21 @@ message CreateAppRequest {
 
 message CreateAppResponse {
   int64 id = 1;
+}
+
+message GetPublicKeyRequest{
+
+}
+
+message GetPublicKeyResponse{
+  repeated Jwk keys = 1;
+}
+
+message Jwk {
+  string kty = 1;
+  string kid = 2;
+  string use = 3;
+  string alg = 4;
+  string n = 5;
+  string e = 6;
 }

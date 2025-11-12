@@ -2,6 +2,8 @@ package auth
 
 import (
 	"context"
+	errorpkg "github.com/kalyuzhin/sso-service/internal/error"
+	"net/mail"
 	"strings"
 
 	"google.golang.org/grpc/metadata"
@@ -36,4 +38,25 @@ func concatString(input []string) string {
 	}
 
 	return sb.String()
+}
+
+func validateEmailAndPassword(email, password string) error {
+	if email == "" {
+		return errorpkg.New("email is required")
+	}
+
+	if password == "" {
+		return errorpkg.New("password is required")
+	}
+
+	if len(password) < 8 {
+		return errorpkg.New("password length should be 8 characters at least")
+	}
+
+	a, err := mail.ParseAddress(email)
+	if err != nil || a.Address != email {
+		return errorpkg.New("email validation failed")
+	}
+
+	return nil
 }
