@@ -2,11 +2,13 @@ package auth
 
 import (
 	"context"
-	"github.com/kalyuzhin/sso-service/internal/model"
-	ssov1 "github.com/kalyuzhin/sso-service/internal/pkg/pb"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/kalyuzhin/sso-service/internal/model"
+	ssov1 "github.com/kalyuzhin/sso-service/internal/pkg/pb"
 )
 
 const (
