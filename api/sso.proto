@@ -23,7 +23,7 @@ service Auth{
 
   rpc CreateApp(CreateAppRequest) returns(CreateAppResponse){};
 
-  rpc GetPublicKey(GetPublicKeyRequest) returns (GetPublicKeyResponse){};
+  rpc GetPublicKeys(GetPublicKeyRequest) returns (GetPublicKeyResponse){};
 }
 
 message RegisterRequest{

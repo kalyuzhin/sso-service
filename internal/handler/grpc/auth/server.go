@@ -80,8 +80,7 @@ func (s *serverAPI) Login(ctx context.Context, req *ssov1.LoginRequest) (*ssov1.
 
 func (s *serverAPI) GetPublicKeys(ctx context.Context, req *ssov1.GetPublicKeyRequest) (*ssov1.GetPublicKeyResponse, error) {
 	jwks := s.service.GetPublicKeys(ctx)
-	var resp *ssov1.GetPublicKeyResponse
-	resp.Keys = make([]*ssov1.Jwk, len(jwks.Keys), 0)
+	resp := ssov1.GetPublicKeyResponse{Keys: make([]*ssov1.Jwk, 0, len(jwks.Keys))}
 
 	for _, jwk := range jwks.Keys {
 		resp.Keys = append(resp.Keys, &ssov1.Jwk{
@@ -93,6 +92,6 @@ func (s *serverAPI) GetPublicKeys(ctx context.Context, req *ssov1.GetPublicKeyRe
 			Kid: jwk.KID,
 		})
 	}
-	
-	return resp, nil
+
+	return &resp, nil
 }

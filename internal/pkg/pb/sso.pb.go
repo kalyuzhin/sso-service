@@ -511,12 +511,12 @@ const file_sso_proto_rawDesc = "" +
 	"\x03use\x18\x03 \x01(\tR\x03use\x12\x10\n" +
 	"\x03alg\x18\x04 \x01(\tR\x03alg\x12\f\n" +
 	"\x01n\x18\x05 \x01(\tR\x01n\x12\f\n" +
-	"\x01e\x18\x06 \x01(\tR\x01e2\x80\x02\n" +
+	"\x01e\x18\x06 \x01(\tR\x01e2\x81\x02\n" +
 	"\x04Auth\x12;\n" +
 	"\bRegister\x12\x15.auth.RegisterRequest\x1a\x16.auth.RegisterResponse\"\x00\x122\n" +
 	"\x05Login\x12\x12.auth.LoginRequest\x1a\x13.auth.LoginResponse\"\x00\x12>\n" +
-	"\tCreateApp\x12\x16.auth.CreateAppRequest\x1a\x17.auth.CreateAppResponse\"\x00\x12G\n" +
-	"\fGetPublicKey\x12\x19.auth.GetPublicKeyRequest\x1a\x1a.auth.GetPublicKeyResponse\"\x00B\x18Z\x16kalyuzhin.sso.v1;ssov1b\x06proto3"
+	"\tCreateApp\x12\x16.auth.CreateAppRequest\x1a\x17.auth.CreateAppResponse\"\x00\x12H\n" +
+	"\rGetPublicKeys\x12\x19.auth.GetPublicKeyRequest\x1a\x1a.auth.GetPublicKeyResponse\"\x00B\x18Z\x16kalyuzhin.sso.v1;ssov1b\x06proto3"
 
 var (
 	file_sso_proto_rawDescOnce sync.Once
@@ -547,11 +547,11 @@ var file_sso_proto_depIdxs = []int32{
 	0, // 1: auth.Auth.Register:input_type -> auth.RegisterRequest
 	2, // 2: auth.Auth.Login:input_type -> auth.LoginRequest
 	4, // 3: auth.Auth.CreateApp:input_type -> auth.CreateAppRequest
-	6, // 4: auth.Auth.GetPublicKey:input_type -> auth.GetPublicKeyRequest
+	6, // 4: auth.Auth.GetPublicKeys:input_type -> auth.GetPublicKeyRequest
 	1, // 5: auth.Auth.Register:output_type -> auth.RegisterResponse
 	3, // 6: auth.Auth.Login:output_type -> auth.LoginResponse
 	5, // 7: auth.Auth.CreateApp:output_type -> auth.CreateAppResponse
-	7, // 8: auth.Auth.GetPublicKey:output_type -> auth.GetPublicKeyResponse
+	7, // 8: auth.Auth.GetPublicKeys:output_type -> auth.GetPublicKeyResponse
 	5, // [5:9] is the sub-list for method output_type
 	1, // [1:5] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
