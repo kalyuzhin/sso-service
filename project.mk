@@ -64,7 +64,7 @@ gen-protoc:
 
 .PHONY: run
 run: fmt
-	go run cmd/sso/main.go
+	go run cmd/sso/main.go --config=./local.yaml --env-path=./.env
 
 .PHONY: migration-create
 ## creates migration with first param as name

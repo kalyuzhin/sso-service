@@ -39,6 +39,7 @@ message LoginRequest {
   string email = 1;
   string password = 2;
   int32 add_id = 3;
+  string service_name = 4;
 }
 
 message LoginResponse {

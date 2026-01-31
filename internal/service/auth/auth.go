@@ -2,13 +2,13 @@ package auth
 
 import (
 	"context"
-	"github.com/kalyuzhin/sso-service/internal/lib/jwks"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/kalyuzhin/sso-service/internal/config"
 	errorpkg "github.com/kalyuzhin/sso-service/internal/error"
+	"github.com/kalyuzhin/sso-service/internal/lib/jwks"
 	"github.com/kalyuzhin/sso-service/internal/lib/jwt"
 	"github.com/kalyuzhin/sso-service/internal/lib/refreshtoken"
 	"github.com/kalyuzhin/sso-service/internal/model"
